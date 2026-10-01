@@ -1,4 +1,4 @@
-package org.conrad.security;
+package org.conrad.billingservice.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;

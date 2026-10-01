@@ -1,8 +1,9 @@
-package org.conrad.security;
+package org.conrad.residentservice.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.conrad.residentservice.model.Resident;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -19,18 +20,18 @@ public class JwtService {
 
     public JwtService(
             @Value("${app.jwt.secret}") String secret,
-            @Value("${app.jwt.expiration-minutes:60}") long expirationMinutes
+            @Value("${app.jwt.expiration-minutes}") long expirationMinutes
     ) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
         this.expirationMinutes = expirationMinutes;
     }
 
-    public String issueToken(String subject, String email, boolean manager, Long apartmentId) {
+    public String issueToken(Resident resident) {
         Instant now = Instant.now();
         return Jwts.builder()
-                .subject(subject)
-                .claim("email", email)
-                .claim("manager", manager)
+                .subject(resident.getId().toString())
+                .claim("email", resident.getEmail())
+                .claim("manager", resident.isManager())
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plus(expirationMinutes, ChronoUnit.MINUTES)))
                 .signWith(key)
